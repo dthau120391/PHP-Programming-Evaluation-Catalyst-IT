@@ -12,21 +12,21 @@ include "MySqlConnection.php";
 
 class UserUploader
 {
-	protected function isValidCommand($command)
+	private static function isValidCommand($command)
 	{
 		$validCommands = ["file", "create_table", "dry_run", "help"];
 	
 		return in_array($command, $validCommands);
 	}
 
-	protected function isValidFlag($flag)
+	private static function isValidFlag($flag)
 	{
 		$validFlags = ["u", "p", "h"];
 
 		return in_array($flag, $validFlags);
 	}
 
-	protected function getDirectives($args)
+	private static function getDirectives($args)
 	{
 		//Skip file name
 		array_shift($args);
@@ -61,10 +61,10 @@ class UserUploader
 		
 			//Get and validate directive
 			$command   = substr(array_shift($value), $isCommand ? 2 : 1);
-			if((!$this->isValidCommand($command) && $isCommand) || (!$this->isValidFlag($command) && $isFlag))
+			if((!self::isValidCommand($command) && $isCommand) || (!self::isValidFlag($command) && $isFlag))
 			{
 				echo "\nUnknown directive: " . $command;
-				$this->printHelp();
+				self::printHelp();
 				exit(0);
 			}
 
@@ -89,22 +89,22 @@ class UserUploader
 	    	return $directives;
 	}
 
-	protected function createTable()
+	private static function createTable()
 	{
 
 	}
 
-	protected function parseCVS()
+	private static function parseCVS()
 	{
 
 	}
 
-	protected function userUpload()
+	private static function userUpload()
 	{
 	
 	}
 
-	protected function printHelp()
+	private static function printHelp()
 	{
 		echo "\n***************Help User Upload************\n\n";
 		echo "--file [csv file name] – this is the name of the CSV to be parsed\n\n";
@@ -115,7 +115,7 @@ class UserUploader
 		echo "-h – MySQL host\n\n";
 	}
 
-	protected function processDirectives($directives)
+	protected static function processDirectives($directives)
 	{
 		$commands = $directives["commands"];
 		$flags = $directives["flags"];
@@ -138,7 +138,7 @@ class UserUploader
 			//Print list of directive with details
 			if(array_key_exists('help', $commands))
 			{
-				$this->printHelp();
+				self::printHelp();
 			}	
 
 		}
@@ -149,12 +149,12 @@ class UserUploader
 	}
 
 
-	function run($args)
+	public static function run($args)
 	{
 		//Get directives
-		$directives = $this->getDirectives($args);
+		$directives = self::getDirectives($args);
 		//Process directives
-		$this->processDirectives($directives);
+		self::processDirectives($directives);
 	}
 }
 ?>

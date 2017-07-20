@@ -9,7 +9,5 @@ namespace App;
  */
 include "UserUploader.php";
 
-
-$userUploader = new UserUploader;
-$userUploader->run($argv);
+UserUploader::run($argv);
 ?>
