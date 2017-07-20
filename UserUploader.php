@@ -9,6 +9,7 @@ namespace App;
  * @version    1.0
  */
 include "MySqlConnection.php";
+include "CSVProcessor.php";
 
 class UserUploader
 {
@@ -33,7 +34,7 @@ class UserUploader
 		$args = join($args, ' ');
 	    	
 		//Get all directives
-	    	preg_match_all('/ (--\w+ (?:[= ] [^- ]+)?) | (-\w+ (?:[= ] [^- ]+)? )/x', $args, $match );	
+	    	preg_match_all('/ (--\w+ (?:[= ] [^ ]+)?) | (-\w+ (?:[= ] [^ ]+)? )/x', $args, $match );	
 		$args = array_shift($match);
 
 	    	$directives = array(
@@ -94,12 +95,18 @@ class UserUploader
 
 	}
 
-	private static function parseCVS()
+	private static function parseCSV($filePath)
 	{
+		if(is_file($filePath))
+		{
+			$csvProcessor = new CSVProcessor($filePath);	
+			var_dump($csvProcessor->parse());die;	
+		}
 
+		return;
 	}
 
-	private static function userUpload()
+	private static function userUpload($users)
 	{
 	
 	}
@@ -115,7 +122,8 @@ class UserUploader
 		echo "-h – MySQL host\n\n";
 	}
 
-	protected static function processDirectives($directives)
+
+	private static function processDirectives($directives)
 	{
 		$commands = $directives["commands"];
 		$flags = $directives["flags"];
@@ -125,14 +133,15 @@ class UserUploader
 			//Create user table
 			if(array_key_exists('create_table', $commands))
 			{
-				
+				self::createTable();
 				return;
 			}
 		
 			//Process cvs file
 			if(array_key_exists('file', $commands))
 			{
-				$filePath = $commands["file"];
+				$users =self::parseCSV($commands["file"]);
+				self::userUpload($users);
 			}
 		
 			//Print list of directive with details
