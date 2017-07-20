@@ -10,25 +10,25 @@
  */
 for($i = 1; $i <= 100; $i++)
 {
-	$result = "";
-
-	if($i % 3 ==0)
+	if($i % 15 ==0)
 	{
-		$result .= "foo";
+		echo "foobar, ";
+		continue;
 	}
 
+	if($i % 3 == 0)
+	{
+		echo "foo, ";
+		continue;
+	}
+	
 	if($i % 5 == 0)
 	{
-		$result .= "bar";
+		echo "bar, ";
+		continue;
 	}
 
-	if($result === "")
-	{
-		echo $i . ", ";
-	}else
-	{
-		echo $result . ", ";
-	}
+	echo $i . ", ";
 	
 }
 
