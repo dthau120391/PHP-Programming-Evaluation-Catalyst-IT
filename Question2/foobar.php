@@ -9,29 +9,23 @@
  * @version    1.0
  */
 
-for($i = 1; $i <= 100; $i++)
-{
-	if($i % 15 ==0)
-	{
-		echo "foobar, ";
-		continue;
-	}
+for ($i = 1; $i <= 100; $i++) {
+    $m3 = $i;
+    $m5 = "";
 
-	if($i % 3 == 0)
-	{
-		echo "foo, ";
-		continue;
-	}
-	
-	if($i % 5 == 0)
-	{
-		echo "bar, ";
-		continue;
-	}
+    if ($i % 3 == 0) {
+        $m3 = "foo";
+    }
 
-	echo $i . ", ";
-	
+    if ($i % 5 == 0) {
+        $m5 = "bar";
+        if(is_numeric($m3))
+        {
+            $m3 = "";
+        }
+    }
+
+    echo $m3 . $m5 . ", ";
 }
 
 echo "\n";
-?>

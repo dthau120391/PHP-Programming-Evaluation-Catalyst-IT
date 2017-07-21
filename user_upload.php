@@ -7,7 +7,7 @@ namespace App;
  * @author     dthau120391@gmail.com
  * @version    1.0
  */
-include "UserUploader.php";
+include "libs/UserUploader.php";
 
 UserUploader::run($argv);
 ?>
