@@ -10,23 +10,11 @@ namespace App;
  */
 require_once "MySqlConnection.php";
 require_once "CSVProcessor.php";
+require_once "ValidationHelper.php";
+require_once "User.php";
 
 class UserUploader
 {
-    private static function isValidCommand($command)
-    {
-        $validCommands = ["file", "create_table", "dry_run", "help"];
-
-        return in_array($command, $validCommands);
-    }
-
-    private static function isValidFlag($flag)
-    {
-        $validFlags = ["u", "p", "h"];
-
-        return in_array($flag, $validFlags);
-    }
-
     private static function getDirectives($args)
     {
         //Skip file name
@@ -58,7 +46,7 @@ class UserUploader
 
             //Get and validate directive
             $command = substr(array_shift($value), $isCommand ? 2 : 1);
-            if ((!self::isValidCommand($command) && $isCommand) || (!self::isValidFlag($command) && $isFlag)) {
+            if ((!ValidationHelper::isValidCommand($command) && $isCommand) || (!ValidationHelper::isValidFlag($command) && $isFlag)) {
                 echo "\nUnknown directive: " . $command;
                 self::printHelp();
                 exit(0);
@@ -85,7 +73,7 @@ class UserUploader
 
     private static function createTable()
     {
-
+        return User::buildUserTable();
     }
 
     private static function parseCSV($filePath)
@@ -97,9 +85,18 @@ class UserUploader
         }
     }
 
-    private static function userUpload($users)
+    private static function userUpload($userData, $config)
     {
+        if(!empty($userData))
+        {
+            foreach($userData as $data)
+            {
+                $user = new User($data["name"], $data["surname"], $data["email"]);
+                $user->save();
+            }
 
+            die;
+        }
     }
 
     private static function printHelp()
@@ -128,8 +125,9 @@ class UserUploader
 
             //Process cvs file
             if (array_key_exists('file', $commands)) {
-                $users = self::parseCSV($commands["file"]);
-                self::userUpload($users);
+                $userData = self::parseCSV($commands["file"]);
+                //Insert to database
+                self::userUpload($userData, $flags);
             }
 
             //Print list of directive with details
