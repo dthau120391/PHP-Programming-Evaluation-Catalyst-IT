@@ -5,9 +5,8 @@ require_once "MySqlConnection.php";
 require_once "ValidationHelper.php";
 
 /**
- *
- *
  * Class User
+ *
  * @package    App
  * @author     dthau120391@gmail.com
  * @version    1.0
@@ -19,6 +18,12 @@ class User
     private $email;
     private $data;
 
+    /**
+     * User constructor.
+     * @param $name
+     * @param $surname
+     * @param $email
+     */
     public function __construct($name, $surname, $email)
     {
         $this->setData(trim($name), trim($surname), trim($email));
@@ -28,6 +33,8 @@ class User
     }
 
     /**
+     * Set user's name
+     *
      * @param $name
      */
     public function setName($name)
@@ -40,11 +47,23 @@ class User
         }
     }
 
+    /**
+     * Get original data
+     *
+     * @return mixed
+     */
     public function getData()
     {
         return $this->data;
     }
 
+    /**
+     * Set original data
+     *
+     * @param $name
+     * @param $surname
+     * @param $email
+     */
     public function setData($name, $surname, $email)
     {
         $this->data["name"] = $name;
@@ -53,6 +72,8 @@ class User
     }
 
     /**
+     * Get user's name
+     *
      * @return mixed
      */
     public function getName()
@@ -61,6 +82,8 @@ class User
     }
 
     /**
+     * Set user's surname
+     *
      * @param $surname
      */
     public function setSurname($surname)
@@ -74,6 +97,8 @@ class User
     }
 
     /**
+     * Get user's surname
+     *
      * @return mixed
      */
     public function getSurname()
@@ -82,6 +107,8 @@ class User
     }
 
     /**
+     * Set user's email
+     *
      * @param $email
      */
     public function setEmail($email)
@@ -95,6 +122,8 @@ class User
     }
 
     /**
+     * Get user's email
+     *
      * @return mixed
      */
     public function getEmail()
@@ -102,14 +131,27 @@ class User
         return $this->email;
     }
 
+    /**
+     * Return object as a string
+     *
+     * @return string
+     */
     public function toString(){
         return $this->getName() . ", " . $this->getSurname() . ", " . $this->getEmail() . "\n";
     }
 
+    /**
+     * Print original data
+     */
     public function printData(){
         echo "Data: " . $this->data["name"] . ", " . $this->data["surname"] . ", " . $this->data["email"] . "\n";
     }
 
+    /**
+     * Store user to database
+     *
+     * @param $config
+     */
     public function save($config)
     {
         $mysqlConnection = new MySqlConnection($config);
@@ -126,6 +168,12 @@ class User
         }
     }
 
+    /**
+     * Create user table
+     *
+     * @param $config
+     * @return bool
+     */
     public static function buildUserTable($config)
     {
         $mysqlConnection = new MySqlConnection($config);

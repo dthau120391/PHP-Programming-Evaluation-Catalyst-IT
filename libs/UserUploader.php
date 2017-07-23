@@ -2,8 +2,7 @@
 namespace App;
 
 /**
- * Process a CSV file as an input and parse file data is to be
- * inserted into a MySQL database
+ * Process directives and upload user
  *
  * @author     dthau120391@gmail.com
  * @version    1.0
@@ -15,6 +14,12 @@ require_once "User.php";
 
 class UserUploader
 {
+    /**
+     * Get directives from commandline
+     *
+     * @param $args
+     * @return array
+     */
     private static function getDirectives($args)
     {
         //Skip file name
@@ -71,11 +76,23 @@ class UserUploader
         return $directives;
     }
 
+    /**
+     * Create user table
+     *
+     * @param $config
+     * @return bool
+     */
     private static function createTable($config)
     {
         return User::buildUserTable($config);
     }
 
+    /**
+     * Parse data from csv file
+     *
+     * @param $filePath
+     * @return mixed|null
+     */
     private static function parseCSV($filePath)
     {
         if (is_file($filePath)) {
@@ -90,6 +107,12 @@ class UserUploader
         }
     }
 
+    /**
+     * Upload user data
+     *
+     * @param $userData
+     * @param $config
+     */
     private static function userUpload($userData, $config)
     {
         if(!empty($userData))
@@ -110,6 +133,12 @@ class UserUploader
         }
     }
 
+    /**
+     * Process dry run mode - do not insert data to DB
+     *
+     * @param $userData
+     * @return array
+     */
     private static function dryRun($userData)
     {
         if(!empty($userData))
@@ -125,6 +154,9 @@ class UserUploader
         }
     }
 
+    /**
+     * Print help
+     */
     private static function printHelp()
     {
         echo "\n***************Help User Upload************\n\n";
@@ -136,7 +168,11 @@ class UserUploader
         echo "-h – MySQL host\n\n";
     }
 
-
+    /**
+     * Process directives
+     *
+     * @param $directives
+     */
     private static function processDirectives($directives)
     {
         $commands = $directives["commands"];
@@ -183,7 +219,11 @@ class UserUploader
         }
     }
 
-
+    /**
+     * Run main functions of program
+     *
+     * @param $args
+     */
     public static function run($args)
     {
         //Get directives

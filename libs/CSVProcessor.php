@@ -2,8 +2,7 @@
 namespace App;
 
 /**
- * Process a CSV file as an input and parse file data is to be
- * inserted into a MySQL database
+ * Process a CSV file as an input and parse file data
  *
  * @author     dthau120391@gmail.com
  * @version    1.0
@@ -16,6 +15,13 @@ class CSVProcessor
     private $delimiter;
     private $length;
 
+    /**
+     * CSVProcessor constructor.
+     *
+     * @param $filePath
+     * @param string $delimiter
+     * @param int $length
+     */
     public function __construct($filePath, $delimiter = ",", $length = 1000)
     {
         $this->file = fopen($filePath, "r");
@@ -27,11 +33,19 @@ class CSVProcessor
         }
     }
 
+    /**
+     * Get headers
+     *
+     * @return array
+     */
     public function getHeaders()
     {
         return $this->headers;
     }
 
+    /**
+     * Destroy CSVProcessor instance
+     */
     public function __destruct()
     {
         if ($this->file) {
@@ -39,6 +53,11 @@ class CSVProcessor
         }
     }
 
+    /**
+     * Parse data from csv file
+     *
+     * @return mixed
+     */
     public function parse()
     {
         if ($this->file) {
