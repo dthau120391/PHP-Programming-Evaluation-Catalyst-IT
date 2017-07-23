@@ -22,7 +22,7 @@ class UserUploader
         $args = join($args, ' ');
 
         //Get all directives
-        preg_match_all('/ (--\w+ (?:[= ] [^ ]+)?) | (-\w+ (?:[= ] [^ ]+)? )/x', $args, $match);
+        preg_match_all('/ (--\w+ ([= ][^-][^ ]+)?) | (-\w+ ([= ][^-][^ ]+)? )/x', $args, $match);
         $args = array_shift($match);
 
         $directives = array(
@@ -71,17 +71,22 @@ class UserUploader
         return $directives;
     }
 
-    private static function createTable()
+    private static function createTable($config)
     {
-        return User::buildUserTable();
+        return User::buildUserTable($config);
     }
 
     private static function parseCSV($filePath)
     {
         if (is_file($filePath)) {
             $csvProcessor = new CSVProcessor($filePath);
-            $data = $csvProcessor->parse();
-            return $data;
+            //Check valid header
+            if(ValidationHelper::isValidCSVHeaders($csvProcessor->getHeaders()))
+            {
+                $data = $csvProcessor->parse();
+                return $data;
+            }
+            return null;
         }
     }
 
@@ -91,11 +96,32 @@ class UserUploader
         {
             foreach($userData as $data)
             {
-                $user = new User($data["name"], $data["surname"], $data["email"]);
-                $user->save();
+                if(!ValidationHelper::isExistedEmail($data["email"], $config))
+                {
+                    $user = new User($data["name"], $data["surname"], $data["email"]);
+                    $user->save($config);
+                }
+                else
+                {
+                    echo "Data: " . $data["name"] . ", " . $data["surname"] . ", " . $data["email"] . "\n";
+                    echo "Existed Email: " . $data["email"] . "\n\n";
+                }
+            }
+        }
+    }
+
+    private static function dryRun($userData)
+    {
+        if(!empty($userData))
+        {
+            $users = [];
+
+            foreach($userData as $data)
+            {
+                  $users[] = new User($data["name"], $data["surname"], $data["email"]);
             }
 
-            die;
+            return $users;
         }
     }
 
@@ -117,17 +143,34 @@ class UserUploader
         $flags = $directives["flags"];
 
         if (!empty($commands)) {
+            //Get config database detail
+            $config["hostname"] = array_key_exists('h', $flags) ? $flags["h"] : "";
+            $config["username"] = array_key_exists('u', $flags) ? $flags["u"] : "";
+            $config["password"] = array_key_exists('p', $flags) ? $flags["p"] : "";
+
             //Create user table
             if (array_key_exists('create_table', $commands)) {
-                self::createTable();
+                if(self::createTable($config))
+                {
+                    echo "Create Database Table successfully!";
+                }
                 return;
             }
 
             //Process cvs file
             if (array_key_exists('file', $commands)) {
                 $userData = self::parseCSV($commands["file"]);
-                //Insert to database
-                self::userUpload($userData, $flags);
+                //Insert to database if it is not dry_run mode
+                if(!array_key_exists('dry_run', $commands))
+                {
+                    if(self::createTable($config))
+                    {
+                        $config["dbname"]   = "catalyst_test";
+                        self::userUpload($userData, $config);
+                    }
+                }else{
+                    self::dryRun($userData);
+                }
             }
 
             //Print list of directive with details

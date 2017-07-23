@@ -25,7 +25,11 @@ class CSVProcessor
         if ($this->file) {
             $this->headers = fgetcsv($this->file, $this->length, $this->delimiter);
         }
+    }
 
+    public function getHeaders()
+    {
+        return $this->headers;
     }
 
     public function __destruct()
@@ -41,7 +45,7 @@ class CSVProcessor
             while (($row = fgetcsv($this->file, $this->length, $this->delimiter)) !== FALSE) {
                 $temp = null;
                 foreach ($this->headers as $i => $header) {
-                    $temp[$header] = $row[$i];
+                    $temp[trim($header)] = trim($row[$i]);
                 }
                 $this->data[] = $temp;
             }

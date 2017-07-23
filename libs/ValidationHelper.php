@@ -28,8 +28,32 @@ class ValidationHelper
         return false;
     }
 
-    public static function isExistedEmail($email) {
+    public static function isExistedEmail($email, $config) {
+        if(!empty($email) && self::validateEmail($email))
+        {
+            $mysqlConnection = new MySqlConnection($config);
+
+            if(!empty($mysqlConnection))
+            {
+                //Insert into database
+                $query  = "SELECT * FROM users WHERE users.email = '$email'";
+                $result = $mysqlConnection->query($query);
+                if($result !== false && $result->rowCount())
+                {
+                    return true;
+                }
+            }
+        }
+
+
         return false;
+    }
+
+    public static function isValidCSVHeaders($headers)
+    {
+        $validCSVHeaders = ["name", "surname", "email"];
+
+        return $headers == $validCSVHeaders;
     }
 
     public static function isValidCommand($command)

@@ -29,11 +29,17 @@ class MySqlConnection
     //Open connection
     private function open(array $config)
     {
-        $this->pdo = new PDO(
-            $this->getConnectionString($config),
-            $config['username'],
-            $config['password']
-        );
+        try {
+            $this->pdo = new PDO(
+                $this->getConnectionString($config),
+                $config['username'],
+                $config['password']
+            );
+        } catch (\PDOException $e) {
+            echo "PDO Exception: " . $e->getMessage() . "\n";
+            die();
+        }
+
     }
 
     //Execute a sql query.
@@ -63,7 +69,7 @@ class MySqlConnection
     //Get the connection string with format 'mysql:dbname=...;host=...;'
     private function getConnectionString(array $config)
     {
-        return 'mysql:dbname=' . $config['dbname'] . ';host=' . $config['hostname'];
+        return 'mysql:host=' . $config['hostname'] . (array_key_exists("dbname", $config) ? ';dbname=' . $config['dbname'] : "");
     }
 }
 ?>
