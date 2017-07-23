@@ -1,8 +1,7 @@
 <?php
 namespace App;
 /**
- * Process a CSV file as an input and parse file data is to be
- * inserted into a MySQL database
+ * Connect Database and process query
  *
  * @author     dthau120391@gmail.com
  * @version    1.0
@@ -14,19 +13,29 @@ class MySqlConnection
     // PDO Object
     private $pdo;
 
-    //Create a new connection instance.
+    /**
+     * MySqlConnection constructor.
+     *
+     * @param array $config
+     */
     public function __construct(array $config)
     {
         $this->open($config);
     }
 
-    //Destroy an exists connection instance.
+    /**
+     * Destroy existed mysql connection
+     */
     public function __destruct()
     {
         $this->close();
     }
 
-    //Open connection
+    /**
+     * Open connection
+     *
+     * @param array $config
+     */
     private function open(array $config)
     {
         try {
@@ -42,13 +51,24 @@ class MySqlConnection
 
     }
 
-    //Execute a sql query.
+    /**
+     * Execute query
+     *
+     * @param $sql
+     * @return mixed
+     */
     public function execute($sql)
     {
         return $this->pdo->exec($sql);
     }
 
-    //Send a sql query to get results.
+    /**
+     * Execute query and get result
+     *
+     * @param $sql
+     * @param array $params
+     * @return mixed
+     */
     public function query($sql, array $params = [])
     {
         if (!empty($params)) {
@@ -60,13 +80,20 @@ class MySqlConnection
         return $this->pdo->query($sql);
     }
 
-    //Close connection.
+    /**
+     * Close connection
+     */
     private function close()
     {
         $this->pdo = null;
     }
 
-    //Get the connection string with format 'mysql:dbname=...;host=...;'
+    /**
+     * Get connection string
+     *
+     * @param array $config
+     * @return string
+     */
     private function getConnectionString(array $config)
     {
         return 'mysql:host=' . $config['hostname'] . (array_key_exists("dbname", $config) ? ';dbname=' . $config['dbname'] : "");
