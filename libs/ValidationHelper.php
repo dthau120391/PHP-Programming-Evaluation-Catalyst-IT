@@ -5,6 +5,8 @@ namespace App;
  * Validate data
  *
  * Class ValidationHelper
+ *
+ * @author  dthau120391@gmail.com
  * @package App
  */
 require_once "MySqlConnection.php";
